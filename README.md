@@ -91,3 +91,10 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 GOOGLE_OAUTH_REDIRECT_URL=http://localhost:9000/api/auth/google/callback
 ```
 14.- Assegurar que aquestes variables estiguin carregades abans d'iniciar el servidor, utilitzar per defecte npm start per fer RUN en el projecte (ruta per defecte per agafar les variables d'entorn integrada).
+
+
+## Referències
+
+[1] https://dev.to/jeanvittory/jwt-refresh-tokens-2g3d
+[2] https://auth0.com/blog/refresh-tokens-what-are-they-and-when-to-use-them/
+[3] companys de classe per resoldre lo de les rutes
