@@ -81,13 +81,14 @@ router.post('/users', createUserHandler);
  *                 type: object
  *                 properties:
  *                  name:
- *                     type: string
+ *                    type: string
  *                  age:
  *                    type: integer
  *                  email:
- *                     type: string
+ *                    type: string
  */
-router.get('/users', checkJwt, getAllUsersHandler);
+//router.get('/users', checkJwt, getAllUsersHandler);
+router.get('/users', getAllUsersHandler);
 
 /**
  * @openapi
@@ -112,10 +113,10 @@ router.get('/users', checkJwt, getAllUsersHandler);
  *               type: object
  *               properties:
  *                  name:
- *                   type: string
- *                 age:
- *                   type: integer
- *                 email:
+ *                    type: string
+ *                  age:
+ *                    type: integer
+ *                  email:
  *                    type: string
  *       404:
  *         description: Usuario no encontrado

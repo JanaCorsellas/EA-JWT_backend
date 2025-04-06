@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { registerNewUser, loginUser, googleAuth } from "../auth/auth_service.js";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const registerCtrl = async ({body}: Request, res: Response) => {
     try{
@@ -32,6 +34,7 @@ const loginCtrl = async ({ body }: Request, res: Response) => {
 };
 
 const googleAuthCtrl = async(req: Request, res: Response) =>{
+    console.log('REDIRECT URL:', process.env.GOOGLE_OAUTH_REDIRECT_URL);
     const redirectUri = process.env.GOOGLE_OAUTH_REDIRECT_URL;
     if (!redirectUri) {
         console.error(" ERROR: GOOGLE_OAUTH_REDIRECT_URL no està definida a .env");

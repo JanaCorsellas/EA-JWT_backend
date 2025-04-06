@@ -13,10 +13,11 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 
 dotenv.config(); // Cargamos las variables de entorno desde el archivo .env
+console.log("GOOGLE_OAUTH_REDIRECT_URL:", process.env.GOOGLE_OAUTH_REDIRECT_URL);
 
 const app = express();
 
-const LOCAL_PORT = process.env.SERVER_PORT || 9000;
+const LOCAL_PORT = process.env.PORT || 9000;
 
 // Configuración de Swagger
 const swaggerOptions = {
@@ -92,7 +93,7 @@ app.get('/', (req, res) => {
 // Conexión a MongoDB
 //mongoose;
 mongoose
-    .connect(process.env.MONGODB_URI || 'mongodb+srv://joan:1234@cluster0.3owhs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+    .connect(process.env.MONGO_URI || 'mongodb://localhost:27017/JWT')
     .then(() => console.log('Connected to DB'))
     .catch((error) => console.error('DB Connection Error:', error));
 
