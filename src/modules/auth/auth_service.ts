@@ -1,5 +1,5 @@
 import { encrypt, verified } from "../../utils/bcrypt.handle.js";
-import { generateToken } from "../../utils/jwt.handle.js";
+import { generateRefreshToken, generateToken, verifyRefreshToken } from "../../utils/jwt.handle.js";
 import User, { IUser } from "../users/user_models.js";
 import { Auth } from "./auth_model.js";
 import jwt from 'jsonwebtoken';
@@ -25,9 +25,19 @@ const loginUser = async ({ email, password }: Auth) => {
     const isCorrect = await verified(password, passwordHash);
     if(!isCorrect) return "INCORRECT_PASSWORD";
 
-    const token = generateToken(checkIs.email);
+    const additionalData = {
+        name: checkIs.name,
+        role: checkIs.role || 'user' // Asumiendo que tienes un campo role o algo similar
+    };
+
+    const token = generateToken(checkIs.email, additionalData);
+    const refreshToken = generateRefreshToken(checkIs.email);
+
+    checkIs.refreshToken = refreshToken; // Guardar el refresh token en la base de datos
+    await checkIs.save(); // Guardar el usuario actualizado
     const data = {
         token,
+        refreshToken,
         user: checkIs
     }
     return data;
@@ -99,5 +109,36 @@ const googleAuth = async (code: string) => {
     }
 };
 
+const refreshUserToken = async (refreshToken: string) => {
+    try {
+        // Verificar refresh token
+        const payload: any = verifyRefreshToken(refreshToken);
+        if (!payload) return "INVALID_REFRESH_TOKEN";
 
-export { registerNewUser, loginUser, googleAuth };
+        // Buscar usuario por email (que está en el payload)
+        const user = await User.findOne({ email: payload.id });
+        if (!user) return "USER_NOT_FOUND";
+
+        // Verificar que el refresh token coincide con el almacenado
+        if (user.refreshToken !== refreshToken) return "REFRESH_TOKEN_EXPIRED";
+
+        // Datos adicionales para el token
+        const additionalData = {
+            name: user.name,
+            role: user.role || 'user'
+        };
+
+        // Generar nuevo access token
+        const newToken = generateToken(user.email, additionalData);
+        
+        return {
+            token: newToken,
+            user
+        };
+    } catch (error) {
+        console.error("Error refreshing token:", error);
+        return "ERROR_REFRESHING_TOKEN";
+    }
+};
+
+export { registerNewUser, loginUser, googleAuth, refreshUserToken };

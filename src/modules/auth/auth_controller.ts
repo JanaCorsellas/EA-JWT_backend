@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { registerNewUser, loginUser, googleAuth } from "../auth/auth_service.js";
+import { registerNewUser, loginUser, googleAuth, refreshUserToken } from "../auth/auth_service.js";
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -85,5 +85,24 @@ const googleAuthCallback = async (req: Request, res: Response) => {
     }
 };
 
+const refreshTokenCtrl = async (req: Request, res: Response) => {
+    try {
+        const { refreshToken } = req.body;
+        
+        if (!refreshToken) {
+            return res.status(400).json({ message: "Refresh token requerido" });
+        }
 
-export { registerCtrl, loginCtrl,googleAuthCtrl, googleAuthCallback };
+        const result = await refreshUserToken(refreshToken);
+        
+        if (typeof result === 'string') {
+            return res.status(401).json({ message: result });
+        }
+        
+        return res.json(result);
+    } catch (error: any) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export { registerCtrl, loginCtrl,googleAuthCtrl, googleAuthCallback, refreshTokenCtrl };
